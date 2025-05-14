@@ -31,7 +31,7 @@ public class BudgetService {
 
     public BudgetService(BudgetRepository budgetRepository, UserRepository userRepository, EmailTemplate emailTemplate,
                          EmailSender emailSender, SecurityUtils securityUtils, CategoryRepository categoryRepository,
-                         @Value("${app.backend.url}") String backendUrl) {
+                         @Value("${APP_BACKEND_URL}") String backendUrl) {
         this.budgetRepository = budgetRepository;
         this.userRepository = userRepository;
         this.emailTemplate = emailTemplate;

@@ -13,6 +13,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="com.example.eelarve.main~1" target="21" />
+      <module name="com.example.eelarve.test~1" target="21" />
       <module name="demo" target="23" />
       <module name="demo.main" target="23" />
       <module name="demo.test" target="23" />

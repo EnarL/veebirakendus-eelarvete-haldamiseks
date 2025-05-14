@@ -17,7 +17,7 @@ public class BudgetController {
     private final String frontendUrl;
 
     public BudgetController(BudgetService budgetService,
-                            @Value("${app.url}") String frontendUrl) {
+                            @Value("${APP_FRONTEND_URL}") String frontendUrl) {
         this.budgetService = budgetService;
         this.frontendUrl = frontendUrl;
     }

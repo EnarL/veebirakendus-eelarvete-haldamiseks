@@ -52,8 +52,10 @@ public class BudgetControllerTests {
     private BudgetService budgetService;
 
     private BudgetDTO mockBudgetDTO;
-    private Budget mockBudget;
-    private List<CategorySpentDTO> mockCategorySpentList;
+
+    public BudgetControllerTests(BudgetService budgetService) {
+        this.budgetService = budgetService;
+    }
 
     @BeforeEach
     void setup() {
@@ -64,13 +66,13 @@ public class BudgetControllerTests {
         );
 
         // Setup mock budget entity
-        mockBudget = new Budget();
+        Budget mockBudget = new Budget();
         mockBudget.setId(1L);
         mockBudget.setName("Test Budget");
         mockBudget.setTotalAmount(new BigDecimal("1000.00"));
 
         // Setup mock category spent list
-        mockCategorySpentList = List.of(
+        List<CategorySpentDTO> mockCategorySpentList = List.of(
                 new CategorySpentDTO("Groceries", new BigDecimal("250.00")),
                 new CategorySpentDTO("Utilities", new BigDecimal("150.00"))
         );
