@@ -50,12 +50,10 @@ const CategoriesPage: NextPage = () => {
         });
     }, []);
 
-    // Effect to handle fetched categories
     useEffect(() => {
         if (fetchedCategories) {
-            console.log("Fetched categories:", fetchedCategories);
 
-            // Check what type of data we're receiving
+
             if (Array.isArray(fetchedCategories)) {
                 const mappedCategories = fetchedCategories.map((item) => {
                     if (typeof item === 'object' && item !== null && 'name' in item) {
@@ -95,7 +93,7 @@ const CategoriesPage: NextPage = () => {
     const handleAddCategory = async () => {
         if (newCategory.trim()) {
             try {
-                await createCategory({ name: newCategory, isGlobal: false }); // Adjust userId and isGlobal as needed
+                await createCategory({ name: newCategory, isGlobal: false });
                 setCategories(prev => [...prev, { name: newCategory }]);
                 setNewCategory("");
                 showNotification("Kategooria lisatud edukalt!", "success");

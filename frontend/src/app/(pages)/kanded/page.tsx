@@ -146,7 +146,11 @@ export default function Kanded() {
             open: true,
             isEditing: edit,
             editEntry: edit && entry ? entry : null,
-            entry: edit && entry ? { ...entry } : {
+            entry: edit && entry ? {
+                ...entry,
+
+                id: entry.id ?? null
+            } : {
                 id: null,
                 kuupäev: new Date().toISOString().split("T")[0],
                 summa: "",

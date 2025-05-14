@@ -5,7 +5,7 @@ const useCreateCategory = () => {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
 
-    const createCategory = async (category: { name: string; userId: number; isGlobal: boolean }) => {
+    const createCategory = async (category: { name: string;  isGlobal: boolean }) => {
         setLoading(true);
         setError(null);
         setSuccess(false);

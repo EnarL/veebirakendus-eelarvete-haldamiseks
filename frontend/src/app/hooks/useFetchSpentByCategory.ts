@@ -1,12 +1,17 @@
 import { useState, useEffect } from "react";
 
-export const useSpentByCategory = (budgetId: number | null) => {
-    const [data, setData] = useState<Record<string, number> | null>(null);
+interface CategoryData {
+    categoryName: string;
+    amount: number;
+}
+
+export const useSpentByCategory = (budgetId: number | null, alwaysFetch: boolean = false) => {
+    const [data, setData] = useState<CategoryData[] | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!budgetId) {
+        if (!budgetId && !alwaysFetch) {
             setData(null);
             setError(null);
             setLoading(false);
@@ -25,8 +30,18 @@ export const useSpentByCategory = (budgetId: number | null) => {
                     throw new Error(`Error: ${response.statusText}`);
                 }
 
-                const result = await response.json();
-                setData(result);
+
+                const result = await response.json() as Record<string, unknown>;
+
+
+                const transformedData: CategoryData[] = Object.entries(result).map(([categoryName, amount]) => ({
+                    categoryName,
+
+                    amount: typeof amount === 'number' ? amount :
+                        typeof amount === 'string' ? parseFloat(amount) : 0,
+                }));
+
+                setData(transformedData);
             } catch (err: any) {
                 setError(err.message);
             } finally {
@@ -35,7 +50,7 @@ export const useSpentByCategory = (budgetId: number | null) => {
         };
 
         fetchSpentByCategory();
-    }, [budgetId]);
+    }, [budgetId, alwaysFetch]);
 
     return { data, loading, error };
 };
