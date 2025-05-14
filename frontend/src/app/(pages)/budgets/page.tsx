@@ -306,11 +306,10 @@ const BudgetsPage: React.FC = () => {
                     </Tabs>
                 </Box>
             </Paper>
-@ts-ignore
             {tabValue === 0 && <BudgetOverviewTab budgets={budgets}/>}
             {tabValue === 1 && <BudgetAddForm onSubmit={handleSubmit} />}
             {tabValue === 2 && (
-                // @ts-ignore
+
                 <BudgetList
                     budgets={budgets}
                     onInviteMember={handleInviteMember}
