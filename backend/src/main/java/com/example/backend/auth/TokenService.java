@@ -43,6 +43,7 @@ public class TokenService {
     }
 
     public void clearTokens(HttpServletResponse response) {
+        refreshTokenRepository.deleteByUserId(securityUtils.getAuthenticatedUserId());
         addHttpOnlyCookie(response, "accessToken", "", 0);
     }
 
