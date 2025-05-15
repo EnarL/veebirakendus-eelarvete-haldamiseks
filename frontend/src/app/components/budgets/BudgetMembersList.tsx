@@ -3,7 +3,6 @@ import {
     Avatar,
     Box,
     Button,
-    Chip,
     IconButton,
     List,
     ListItem,

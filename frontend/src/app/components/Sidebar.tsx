@@ -75,10 +75,11 @@ export default function Sidebar() {
 
     return (
         <>
-            {/* Icon Button for Mobile */}
             {!isDrawerOpen && (
+
                 <IconButton
                     onClick={toggleDrawer(true)}
+                    aria-label="Ava menüü"
                     sx={{
                         position: "fixed",
                         top: "64px",

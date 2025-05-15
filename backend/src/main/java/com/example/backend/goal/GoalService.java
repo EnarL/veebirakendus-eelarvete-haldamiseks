@@ -9,15 +9,13 @@ import java.util.List;
 public class GoalService {
 
     private final GoalRepository goalRepository;
-    private final SecurityUtils securityUtils;
 
-    public GoalService(GoalRepository goalRepository, SecurityUtils securityUtils) {
+    public GoalService(GoalRepository goalRepository) {
         this.goalRepository = goalRepository;
-        this.securityUtils = securityUtils;
     }
 
     public GoalDTO addGoal(GoalDTO goalDTO) {
-        long userId = securityUtils.getAuthenticatedUserId();
+        long userId = SecurityUtils.getAuthenticatedUserId();
 
         Goal goal = Goal.builder()
                 .name(goalDTO.name())
@@ -75,7 +73,7 @@ public class GoalService {
     }
 
     public List<GoalDTO> getAllUserGoals() {
-        long userId = securityUtils.getAuthenticatedUserId();
+        long userId = SecurityUtils.getAuthenticatedUserId();
         return goalRepository.findAllByUserId(userId)
                 .stream()
                 .map(goal -> new GoalDTO(

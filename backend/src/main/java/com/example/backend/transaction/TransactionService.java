@@ -27,24 +27,21 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final CategoryRepository categoryRepository;
-    private final SecurityUtils securityUtils;
     private final GroupingRulesRepository groupingRulesRepository;
 
-    public TransactionService(TransactionRepository transactionRepository, CategoryRepository categoryRepository, SecurityUtils securityUtils, GroupingRulesRepository groupingRulesRepository) {
+    public TransactionService(TransactionRepository transactionRepository, CategoryRepository categoryRepository, GroupingRulesRepository groupingRulesRepository) {
         this.transactionRepository = transactionRepository;
         this.categoryRepository = categoryRepository;
-        this.securityUtils = securityUtils;
         this.groupingRulesRepository = groupingRulesRepository;
     }
 
     public TransactionDTO addTransaction(TransactionDTO transactionDTO) {
-        // Find existing category by name (ignoring userId)
         Category category = categoryRepository.findByName(transactionDTO.categoryName())
                 .orElseGet(() -> {
-                    // Create a new category if it doesn't exist
                     Category newCategory = new Category();
+                    newCategory.setUserId(SecurityUtils.getAuthenticatedUserId());
                     newCategory.setName(transactionDTO.categoryName());
-                    newCategory.setGlobal(true); // Mark as global for shared usage
+                    newCategory.setGlobal(true);
                     return categoryRepository.save(newCategory);
                 });
 
@@ -52,9 +49,8 @@ public class TransactionService {
                 ? TransactionType.EXPENSE
                 : TransactionType.INCOME;
 
-        // Build the transaction
         Transaction transaction = Transaction.builder()
-                .userId(securityUtils.getAuthenticatedUserId()) // Keep userId for tracking
+                .userId(SecurityUtils.getAuthenticatedUserId())
                 .transactionType(transactionType)
                 .amount(transactionDTO.amount())
                 .transactionDate(transactionDTO.transactionDate())
@@ -62,10 +58,8 @@ public class TransactionService {
                 .description(transactionDTO.description())
                 .build();
 
-        // Save the transaction
         Transaction savedTransaction = transactionRepository.save(transaction);
 
-        // Convert the saved transaction back to DTO with the ID
         return new TransactionDTO(
                 savedTransaction.getId(),
                 savedTransaction.getTransactionType(),
@@ -105,7 +99,7 @@ public class TransactionService {
         transactionRepository.save(transaction);
     }
     public List<TransactionDTO> getAllUserTransactions() {
-        Long userId = securityUtils.getAuthenticatedUserId();
+        Long userId = SecurityUtils.getAuthenticatedUserId();
         return transactionRepository.findAll().stream()
                 .filter(transaction -> transaction.getUserId() != null && transaction.getUserId().equals(userId)) // Add null check
                 .map(transaction -> new TransactionDTO(
@@ -120,7 +114,7 @@ public class TransactionService {
     }
 
     public List<TransactionDTO> getAllUserExpenses() {
-        Long userId = securityUtils.getAuthenticatedUserId();
+        Long userId = SecurityUtils.getAuthenticatedUserId();
         return transactionRepository.findAll().stream()
                 .filter(transaction -> transaction.getUserId() != null && transaction.getUserId().equals(userId)) // Add null check
                 .filter(transaction -> transaction.getTransactionType() == TransactionType.EXPENSE)
@@ -136,7 +130,7 @@ public class TransactionService {
     }
 
     public List<TransactionDTO> getAllUserIncomes() {
-        Long userId = securityUtils.getAuthenticatedUserId();
+        Long userId = SecurityUtils.getAuthenticatedUserId();
         return transactionRepository.findAll().stream()
                 .filter(transaction -> transaction.getUserId() != null && transaction.getUserId().equals(userId)) // Add null check
                 .filter(transaction -> transaction.getTransactionType() == TransactionType.INCOME)
@@ -152,7 +146,7 @@ public class TransactionService {
     }
 
     public List<MonthlyIncomeDTO> getAllUserIncomesByMonth() {
-        Long userId = securityUtils.getAuthenticatedUserId();
+        Long userId = SecurityUtils.getAuthenticatedUserId();
         return transactionRepository.findAll().stream()
                 .filter(transaction -> transaction.getUserId() != null && transaction.getUserId().equals(userId))
                 .filter(transaction -> transaction.getTransactionType() == TransactionType.INCOME)
@@ -169,7 +163,7 @@ public class TransactionService {
     }
 
     public List<MonthlyExpenseDTO> getAllUserExpensesByMonth() {
-        Long userId = securityUtils.getAuthenticatedUserId();
+        Long userId = SecurityUtils.getAuthenticatedUserId();
         return transactionRepository.findAll().stream()
                 .filter(transaction -> transaction.getUserId() != null && transaction.getUserId().equals(userId))
                 .filter(transaction -> transaction.getTransactionType() == TransactionType.EXPENSE)
@@ -185,7 +179,7 @@ public class TransactionService {
                 .collect(Collectors.toList());
     }
     public List<MonthlySummaryDTO> getAllUserMonthlySummary() {
-        Long userId = securityUtils.getAuthenticatedUserId();
+        Long userId = SecurityUtils.getAuthenticatedUserId();
 
         Map<Integer, BigDecimal> incomesByMonth = transactionRepository.findAll().stream()
                 .filter(transaction -> transaction.getUserId() != null && transaction.getUserId().equals(userId))
@@ -224,7 +218,7 @@ public class TransactionService {
 
             List<Transaction> transactions = new ArrayList<>();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-            Long userId = securityUtils.getAuthenticatedUserId();
+            Long userId = SecurityUtils.getAuthenticatedUserId();
 
             while ((line = csvReader.readNext()) != null) {
                 // Check if the row has enough columns

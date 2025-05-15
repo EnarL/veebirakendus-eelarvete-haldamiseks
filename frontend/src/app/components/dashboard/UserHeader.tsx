@@ -1,4 +1,4 @@
-import { Box, Grid, Paper, Typography } from '@mui/material';
+import {Box, Grid, Paper, Typography} from '@mui/material';
 
 interface UserHeaderProps {
     monthlyExpenses: number;

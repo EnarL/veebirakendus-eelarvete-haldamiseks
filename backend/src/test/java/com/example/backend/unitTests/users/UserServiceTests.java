@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -110,7 +111,7 @@ public class UserServiceTests {
         // Arrange
         ChangePasswordRequest request = new ChangePasswordRequest("wrongPassword", "newPassword", "newPassword");
         UserPrincipal userPrincipal = new UserPrincipal(testUser); // Pass Users object
-        when(securityUtils.getAuthenticatedUser()).thenReturn(userPrincipal);
+        when(SecurityUtils.getAuthenticatedUser()).thenReturn(Optional.of(userPrincipal));
         when(userRepository.findByKasutajanimi("testuser")).thenReturn(testUser);
 
         // Act & Assert
@@ -121,7 +122,7 @@ public class UserServiceTests {
     void getCurrentUser_ShouldReturnUserProfileDTO() {
         // Arrange
         UserPrincipal userPrincipal = new UserPrincipal(testUser); // Pass Users object
-        when(securityUtils.getAuthenticatedUser()).thenReturn(userPrincipal);
+        when(SecurityUtils.getAuthenticatedUser()).thenReturn(Optional.of(userPrincipal));
         when(userRepository.findByKasutajanimi("testuser")).thenReturn(testUser);
 
         // Act
@@ -138,7 +139,7 @@ public class UserServiceTests {
         // Arrange
         UserProfileDTO request = new UserProfileDTO("UpdatedFirstName", "UpdatedLastName", "updated@example.com");
         UserPrincipal userPrincipal = new UserPrincipal(testUser); // Pass Users object
-        when(securityUtils.getAuthenticatedUser()).thenReturn(userPrincipal);
+        when(SecurityUtils.getAuthenticatedUser()).thenReturn(Optional.of(userPrincipal));
         when(userRepository.findByKasutajanimi("testuser")).thenReturn(testUser);
 
         // Act

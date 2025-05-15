@@ -3,7 +3,6 @@ package com.example.backend.category;
 import com.example.backend.auth.SecurityUtils;
 import com.example.backend.budget.Budget;
 import com.example.backend.budget.BudgetRepository;
-import com.example.backend.groupingrules.GroupingRulesRepository;
 import com.example.backend.transaction.Transaction;
 import com.example.backend.transaction.TransactionRepository;
 import com.example.backend.users.Users;
@@ -22,25 +21,21 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
-    private final GroupingRulesRepository groupingRulesRepository;
-    private final SecurityUtils securityUtils;
     private final BudgetRepository budgetRepository;
 
     public CategoryService(
             CategoryRepository categoryRepository,
             UserRepository userRepository,
             TransactionRepository transactionRepository,
-            GroupingRulesRepository groupingRulesRepository, SecurityUtils securityUtils, BudgetRepository budgetRepository) {
+            BudgetRepository budgetRepository) {
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.transactionRepository = transactionRepository;
-        this.groupingRulesRepository = groupingRulesRepository;
-        this.securityUtils = securityUtils;
         this.budgetRepository = budgetRepository;
     }
 
     public void addCategory(CategoryDTO categoryDTO) {
-        Long userId = securityUtils.getAuthenticatedUserId();
+        Long userId = SecurityUtils.getAuthenticatedUserId();
         String normalizedCategoryName = categoryDTO.name().trim().toLowerCase();
         Category existingCategory = categoryRepository.findByNameAndUserId(normalizedCategoryName, userId)
                 .orElse(null);
@@ -110,7 +105,7 @@ public class CategoryService {
 
     public void updateCategory(Long id, CategoryDTO categoryDTO) {
         Category category = findCategoryById(id);
-        Long userId = securityUtils.getAuthenticatedUserId();
+        Long userId = SecurityUtils.getAuthenticatedUserId();
         List<Transaction> transactions = fetchTransactions(categoryDTO.transactionIds());
 
         category.setName(categoryDTO.name());
@@ -152,7 +147,7 @@ public class CategoryService {
 
 
     public List<CategoryDTO> getAllCategories() {
-        Long userId = securityUtils.getAuthenticatedUserId();
+        Long userId = SecurityUtils.getAuthenticatedUserId();
 
         List<Category> userCategories = categoryRepository.findByUserId(userId);
 

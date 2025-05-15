@@ -9,7 +9,6 @@ interface UseLogoutReturn {
     error: string | null;
     isLoading: boolean;
 }
-
 export function useLogout(): UseLogoutReturn {
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -25,17 +24,26 @@ export function useLogout(): UseLogoutReturn {
                 method: "POST",
                 credentials: "include",
             });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(errorText || "Logout failed");
+            if (response.ok) {
+                setIsLoggedIn(false);
+                router.push("/login");
+            } else {
+                let errorMessage = "Logout failed";
+                try {
+                    const errorText = await response.text();
+                    if (errorText) {
+                        errorMessage = errorText;
+                    }
+                } catch (e) {
+                }
+                throw new Error(errorMessage);
             }
-
-            setIsLoggedIn(false);
-            router.push("/login"); // Redirect to login after logout
         } catch (err: any) {
             console.error("Logout error:", err);
             setError(err.message || "Logout failed. Please try again.");
+
+            setIsLoggedIn(false);
+            router.push("/login");
         } finally {
             setIsLoading(false);
         }

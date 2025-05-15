@@ -1,6 +1,6 @@
 import 'chart.js/auto';
-import { Box, Paper, Typography, Button, Card, CardContent, Grid, LinearProgress } from '@mui/material';
-import { ArrowForward } from '@mui/icons-material';
+import {Box, Button, Card, CardContent, Grid, LinearProgress, Paper, Typography} from '@mui/material';
+import {ArrowForward} from '@mui/icons-material';
 
 export interface Budget {
     id: string;

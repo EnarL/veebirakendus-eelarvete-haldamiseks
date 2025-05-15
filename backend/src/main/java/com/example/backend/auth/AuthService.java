@@ -6,6 +6,7 @@ import com.example.backend.users.Users;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,6 +38,7 @@ public class AuthService {
         Users user = userRepository.findByKasutajanimi(userDetails.getUsername());
         tokenService.generateAndSetTokens(user, response);
     }
+    @Transactional
     public void logout(HttpServletResponse response) {
         tokenService.clearTokens(response);
     }

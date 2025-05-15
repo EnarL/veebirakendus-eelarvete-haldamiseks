@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
+
 public interface GoalRepository extends JpaRepository<Goal, Long> {
     List<GoalDTO> findAllByUserId(long userId);
 }

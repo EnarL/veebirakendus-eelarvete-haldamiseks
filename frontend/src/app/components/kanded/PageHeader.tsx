@@ -1,4 +1,4 @@
-import { Box, Button, CardHeader, Stack, Typography } from "@mui/material";
+import {Box, Button, CardHeader, Stack, Typography} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
 interface PageHeaderProps {

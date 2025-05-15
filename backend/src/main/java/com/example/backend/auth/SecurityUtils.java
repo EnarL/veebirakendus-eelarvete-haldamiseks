@@ -2,40 +2,33 @@ package com.example.backend.auth;
 
 import com.example.backend.users.UserPrincipal;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Optional;
 
 @Component
 public class SecurityUtils {
 
-    public UserPrincipal getAuthenticatedUser() {
+    public static Optional<UserPrincipal> getAuthenticatedUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserPrincipal) {
-            return (UserPrincipal) principal;
+            return Optional.of((UserPrincipal) principal);
         }
-        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is not authenticated");
-    }
-    public String getAuthenticatedEmail(){
-        return getAuthenticatedUser().getEmail();
+        return Optional.empty();
     }
 
-    public Long getAuthenticatedUserId() {
-        return getAuthenticatedUser().getUserId();
+    public static String getAuthenticatedEmail(){
+        return SecurityUtils.getAuthenticatedUser()
+                .map(UserPrincipal::getEmail)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated")); // Throw exception if not authenticated
     }
 
-    public static void setAuthenticatedUser(UserPrincipal userPrincipal) {
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+    public static Long getAuthenticatedUserId() {
+        return SecurityUtils.getAuthenticatedUser()
+                .map(UserPrincipal::getUserId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated")); // Throw exception if not authenticated
     }
-    public String getAuthenticatedUserEmail() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof UserDetails) {
-            return ((UserDetails) principal).getUsername();
-        } else {
-            return principal.toString();
-        }
-}}
+
+}

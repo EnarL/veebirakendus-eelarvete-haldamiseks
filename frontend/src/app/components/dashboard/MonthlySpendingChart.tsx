@@ -1,8 +1,8 @@
 import 'chart.js/auto';
-import { Box, Paper, Typography, IconButton } from '@mui/material';
-import { ArrowForward } from '@mui/icons-material';
-import { Line } from 'react-chartjs-2';
-import { ChartData, ChartOptions } from 'chart.js';
+import {Box, IconButton, Paper, Typography} from '@mui/material';
+import {ArrowForward} from '@mui/icons-material';
+import {Line} from 'react-chartjs-2';
+import {ChartData, ChartOptions} from 'chart.js';
 
 interface MonthlySpendingChartProps {
     data: ChartData<'line'>;

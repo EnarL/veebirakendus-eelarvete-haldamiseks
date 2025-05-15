@@ -1,5 +1,6 @@
 package com.example.backend.auth;
 
+
 import com.example.backend.users.UserPrincipal;
 import com.example.backend.users.UserRepository;
 import com.example.backend.users.Users;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 @Component
 public class JWTAuthenticationFilter extends OncePerRequestFilter {

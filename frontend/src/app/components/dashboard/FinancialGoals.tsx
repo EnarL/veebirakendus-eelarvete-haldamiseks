@@ -1,5 +1,5 @@
-import { Box, Paper, Typography, Button, Card, CardContent, Avatar, LinearProgress } from '@mui/material';
-import { ArrowForward, DateRange, MonetizationOn } from '@mui/icons-material';
+import {Avatar, Box, Button, Card, CardContent, LinearProgress, Paper, Typography} from '@mui/material';
+import {ArrowForward, DateRange, MonetizationOn} from '@mui/icons-material';
 
 // Define types
 export interface Goal {

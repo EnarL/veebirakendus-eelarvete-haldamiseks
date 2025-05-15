@@ -25,24 +25,22 @@ public class BudgetService {
     private final UserRepository userRepository;
     private final EmailTemplate emailTemplate;
     private final EmailSender emailSender;
-    private final SecurityUtils securityUtils;
     private final CategoryRepository categoryRepository;
     private final String backendUrl;
 
     public BudgetService(BudgetRepository budgetRepository, UserRepository userRepository, EmailTemplate emailTemplate,
-                         EmailSender emailSender, SecurityUtils securityUtils, CategoryRepository categoryRepository,
+                         EmailSender emailSender, CategoryRepository categoryRepository,
                          @Value("${APP_BACKEND_URL}") String backendUrl) {
         this.budgetRepository = budgetRepository;
         this.userRepository = userRepository;
         this.emailTemplate = emailTemplate;
         this.emailSender = emailSender;
-        this.securityUtils = securityUtils;
         this.categoryRepository = categoryRepository;
         this.backendUrl = backendUrl;  // Store the injected backend URL
     }
 
     public void addBudget(BudgetDTO budgetDTO) {
-        Long userId = securityUtils.getAuthenticatedUserId();
+        Long userId = SecurityUtils.getAuthenticatedUserId();
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -103,7 +101,7 @@ public class BudgetService {
         budgetRepository.save(budget);
     }
     public List<BudgetDTO> getAllBudgets() {
-        Long userId = securityUtils.getAuthenticatedUserId();
+        Long userId = SecurityUtils.getAuthenticatedUserId();
         return budgetRepository.findByMembersId(userId)
                 .stream()
                 .map(budget -> new BudgetDTO(
@@ -139,7 +137,7 @@ public class BudgetService {
         Budget budget = budgetRepository.findById(budgetId)
                 .orElseThrow(() -> new IllegalArgumentException("Budget not found"));
 
-        Long userId = securityUtils.getAuthenticatedUserId();
+        Long userId = SecurityUtils.getAuthenticatedUserId();
 
         Category category = Category.builder()
                 .name(categoryName)
@@ -154,7 +152,7 @@ public class BudgetService {
 
     @Transactional
     public void inviteMember(Long budgetId, String inviteeEmail) {
-        String inviterEmail = securityUtils.getAuthenticatedEmail();
+        String inviterEmail = SecurityUtils.getAuthenticatedEmail();
         Budget budget = budgetRepository.findById(budgetId)
                 .orElseThrow(() -> new IllegalArgumentException("Budget not found"));
 

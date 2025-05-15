@@ -73,6 +73,7 @@ export function LoginForm() {
                             <IconButton
                                 onClick={() => setShowPassword(!showPassword)}
                                 edge="end"
+                                aria-label={showPassword ? "Peida parool" : "Näita parooli"} // "Hide password" or "Show password" in Estonian
                             >
                                 {showPassword ? <VisibilityOff /> : <Visibility />}
                             </IconButton>

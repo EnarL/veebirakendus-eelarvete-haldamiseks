@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
+
 public interface GroupingRulesRepository extends JpaRepository<GroupingRules, Long> {
     List<GroupingRules> findByUserIdAndIsActive(Long userId, boolean b);
 }

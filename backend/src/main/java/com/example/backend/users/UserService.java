@@ -7,25 +7,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
 
     public final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
-    private final SecurityUtils securityUtils;
 
-    public UserService(UserRepository userRepository, SecurityUtils securityUtils) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.securityUtils = securityUtils;
     }
-
     public List<Users> getAllUsers() {
         return userRepository.findAll();
     }
-
-
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
@@ -37,19 +31,20 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User with provided credentials already exists");
         }
 
-        // Create and save the user
         Users user = Users.builder()
                 .kasutajanimi(request.username())
                 .eesnimi(request.firstname())
                 .perekonnanimi(request.lastname())
                 .email(request.email())
-                .parool(encoder.encode(request.password())) // Ensure password is not null
+                .parool(encoder.encode(request.password()))
                 .build();
         userRepository.save(user);
     }
 
     public void changePassword(ChangePasswordRequest request) {
-        UserPrincipal userPrincipal = securityUtils.getAuthenticatedUser();
+        UserPrincipal userPrincipal = SecurityUtils.getAuthenticatedUser()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated"));
+
         Users user = userRepository.findByKasutajanimi(userPrincipal.getUsername());
         if (!encoder.matches(request.currentPassword(), user.getParool())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Current password is incorrect");
@@ -60,7 +55,8 @@ public class UserService {
     }
 
     public UserProfileDTO getCurrentUser() {
-        UserPrincipal userPrincipal = securityUtils.getAuthenticatedUser();
+        UserPrincipal userPrincipal = SecurityUtils.getAuthenticatedUser()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated"));
 
         Users user = userRepository.findByKasutajanimi(userPrincipal.getUsername());
 
@@ -76,7 +72,9 @@ public class UserService {
     }
 
     public void editProfile(UserProfileDTO request) {
-        UserPrincipal userPrincipal = securityUtils.getAuthenticatedUser();
+        UserPrincipal userPrincipal = SecurityUtils.getAuthenticatedUser()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated"));
+
         Users user = userRepository.findByKasutajanimi(userPrincipal.getUsername());
 
         if (user == null) {

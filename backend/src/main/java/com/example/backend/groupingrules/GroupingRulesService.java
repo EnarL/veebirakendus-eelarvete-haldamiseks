@@ -16,26 +16,28 @@ public class GroupingRulesService {
     private final GroupingRulesRepository groupingRulesRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
-    private final SecurityUtils securityUtils;
 
     public GroupingRulesService(GroupingRulesRepository groupingRulesRepository,
                                 UserRepository userRepository,
-                                CategoryRepository categoryRepository,
-                                SecurityUtils securityUtils) {
+                                CategoryRepository categoryRepository) {
         this.groupingRulesRepository = groupingRulesRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
-        this.securityUtils = securityUtils;
     }
 
     public void addGroupingRule(GroupingRulesDTO groupingRulesDTO) {
-        Long userId = securityUtils.getAuthenticatedUserId();
+        Long userId = SecurityUtils.getAuthenticatedUserId();
 
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Category category = categoryRepository.findByName(groupingRulesDTO.categoryName())
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseGet(() -> {
+                    Category newCategory = new Category();
+                    newCategory.setUserId(userId);
+                    newCategory.setName(groupingRulesDTO.categoryName());
+                    return categoryRepository.save(newCategory);
+                });
 
         GroupingRules groupingRule = GroupingRules.builder()
                 .criterion(groupingRulesDTO.criterion())
@@ -46,8 +48,6 @@ public class GroupingRulesService {
 
         groupingRulesRepository.save(groupingRule);
     }
-
-
 
     public void deleteGroupingRule(Long id) {
         groupingRulesRepository.deleteById(id);
